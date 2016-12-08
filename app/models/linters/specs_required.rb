@@ -19,6 +19,8 @@ module Linters
       [
         /\Adb/,
         /\Aconfig/,
+        /\Aspec/,
+        /\Atest/,
       ]
     end
 
@@ -76,7 +78,7 @@ module Linters
         linter: Linters::SpecsRequired,
         message: <<-message.squish
           Expected changes or additions to a test file called
-          [#{expected_spec_filename(file)}](#{expected_spec_url(pr, file)})
+          #{expected_spec_filename(file)}
         message
       )
     end
@@ -90,18 +92,6 @@ module Linters
         file_extname = 'rb'
       end
       "#{filename_base}_spec.#{file_extname}"
-    end
-
-    def self.expected_spec_path(file)
-      path_pattern = config_for_extname(file.extname)[:app_path_pattern]
-
-      path_match = File.dirname(path_pattern.match(file.path)[:path]) + '/'
-      path_match = path_match == './' ? '' : path_match
-      "spec/#{path_match}#{expected_spec_filename(file)}"
-    end
-
-    def self.expected_spec_url(pr, file)
-      pr.expected_url_from_path(expected_spec_path(file))
     end
   end
 end
